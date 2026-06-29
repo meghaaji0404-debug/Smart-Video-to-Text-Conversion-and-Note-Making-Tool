@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Video to Text Tool</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Smart Video to Text Conversion and Note-Making Tool</h1>
+    <p>Upload a lecture video or paste a YouTube link to generate transcripts, summaries, keywords, and AI answers.</p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash">
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form action="/process" method="post" enctype="multipart/form-data">
+      <label>Upload video file</label>
+      <input type="file" name="video_file" accept="video/*">
+      <br><br>
+      <label>Or paste YouTube URL</label>
+      <input type="text" name="youtube_url" placeholder="https://www.youtube.com/watch?v=..." style="width: 100%;">
+      <br><br>
+      <button type="submit">Process Video</button>
+    </form>
+
+    {% if result %}
+      <section>
+        <h2>Transcript</h2>
+        <p>{{ result.transcript }}</p>
+
+        <h2>Summary</h2>
+        <p>{{ result.summary }}</p>
+
+        <h2>Keywords</h2>
+        <ul>
+          {% for keyword in result.keywords %}
+            <li>{{ keyword }}</li>
+          {% endfor %}
+        </ul>
+      </section>
+    {% endif %}
+
+    <form action="/ask" method="post">
+      <h2>Ask a question about the transcript</h2>
+      <textarea name="question" rows="3" placeholder="Ask a question"></textarea>
+      <textarea name="transcript" rows="10" placeholder="Paste transcript here" style="margin-top: 10px;">{{ transcript or '' }}</textarea>
+      <br><br>
+      <button type="submit">Get Answer</button>
+    </form>
+
+    {% if answer %}
+      <section>
+        <h2>Answer</h2>
+        <p>{{ answer }}</p>
+      </section>
+    {% endif %}
+  </div>
+</body>
+</html>
